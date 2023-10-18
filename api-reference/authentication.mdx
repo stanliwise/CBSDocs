@@ -1,0 +1,144 @@
+---
+title: "Authentication"
+description: "Example overview page before API endpoints"
+---
+
+### Authentication For Web service Request
+`client ID` and `Client Secret` must be included in every request. 
+The authentication process involves setting these parameters in the authorization header of each request to ensure 
+restricted access.
+
+### Client ID and Client Secret
+The `client ID` and `client secret` are unique identifiers assigned to each authorized platform. 
+These credentials are essential for authentication. These credentials are typically provided by the CBS platform administrator
+
+
+
+### Security Considerations
+The `client ID` and `client secret` are sensitive information that must be securely stored and transmitted. 
+It is important to implement appropriate security measures, such as encryption and secure storage, to prevent
+ unauthorized access or exposure of these credentials.
+
+### Signature Generation Guide 
+
+1. Identify the data elements required for signature generation. typically, you'll need two values:
+
+- `concatValue`: The data to be used for signature generation (see the API referencing section to get information on how to get this value for each endpoint)
+- `secret_key`: The secret key or secret value (string)
+
+2. Convert the `concatValue` and `secret_key` `strings` to byte arrays using UTF-8 encoding.
+ This step is necessary to ensure the data is in the correct format for cryptographic operations.
+
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+
+
+ 
+with your `secret_key`  and  `concatValue` , you can run the following c# code to calculate the signature:
+
+<CodeGroup>
+
+```cs csharp 
+
+using System;
+using System.Security.Cryptography;
+using System.Text;
+
+public class Program
+{
+    public static string GenerateSignature(string secret_key, string concatValue)
+    {
+        byte[] keyByte = Encoding.UTF8.GetBytes(secret_key);
+        byte[] messageBytes = Encoding.UTF8.GetBytes(concatValue);
+
+        byte[] hashmessage = new HMACSHA256(keyByte).ComputeHash(messageBytes);
+
+        string lowercaseHexits = String.Concat(Array.ConvertAll(hashmessage, x => x.ToString("x2")));
+
+        string signature = Convert.ToBase64String(hashmessage);
+
+        return signature;
+    }
+
+    public static void Main()
+    {
+        string concatValue = "your_data_value";
+        string secret_key = "your_secret_key";
+
+        string signature = GenerateSignature(concatValue, secret_key);
+
+        Console.WriteLine("Generated Signature: " + signature);
+    }
+}
+
+
+
+```
+```java java
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
+
+public class ApiSecurityExample {
+  public static void main(String[] args) {
+    try {
+     String secret = "secret";
+     String message = "Message";
+
+     Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+     SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+     sha256_HMAC.init(secret_key);
+
+     String hash = Base64.encodeBase64String(sha256_HMAC.doFinal(message.getBytes()));
+     System.out.println(hash);
+    }
+    catch (Exception e){
+     System.out.println("Error");
+    }
+   }
+}
+```
+```py python 
+import hashlib
+import hmac
+import base64
+
+message = bytes('Message', 'utf-8')
+secret = bytes('secret', 'utf-8')
+
+signature = base64.b64encode(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
+print(signature)
+```
+</CodeGroup>
+
+The following example shows the final request that includes the Authorization header:
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/report/collection-report' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+"FromRange": "07/11/2021",
+ "EndRange": "12/11/2021", 
+ "paymentRef": "",
+"RevenueHeadId": "3539",
+"MDAId": 0,
+"PaymentProvider": "0", 
+"InvoiceNumber": "", 
+"ReceiptNumber": "",
+"BankCode": "",
+"PaymentDirection": "PaymentDate", 
+   "Pager": {
+"Page": 1,
+"PageSize": 100 
+  }
+}'
+
+```
+
+</RequestExample>
+

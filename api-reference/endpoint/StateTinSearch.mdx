@@ -1,0 +1,224 @@
+---
+title: "StateTinSearch"
+api: "POST /api/v1/user/search-by-filter"
+description: "This web service call will be used by the integrating system to create a state TIN in CBS."
+---
+
+### Header 
+<ParamField header="signature" type="string" required>
+  HMACSHA256 hash of the serialized request model.
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body
+
+
+
+<ParamField body="Name" type="string">
+Name on the tax profile
+</ParamField>
+
+<ParamField body="PhoneNumber" type="string">
+   Phone number on tax profile
+</ParamField>
+
+<ParamField body="TIN" type="string">
+  TIN on tax profile
+</ParamField>
+
+<ParamField body="CategoryId" type="Integer">
+Category code you want to base the search on
+</ParamField>
+
+<ParamField body="PayerId" type="string">
+State TIN on the tax profile
+</ParamField>
+
+<ParamField body="Page" type="Integer" required>
+ Pagination page number
+</ParamField>
+
+<ParamField body="PageSize" type="Integer" required>
+ Pagination page size, number of records to be returned (100 max)
+</ParamField>
+
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/user/search-by-filter' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "Name": "Test Name",
+    "PhoneNumber": "08012345678",
+    "TIN": "Federal Issued TIN",
+    "PayerId": "State TIN",
+    "CategoryId": 1, 
+    "Page": 1,
+    "PageSize": 10
+   
+}'
+```
+
+</RequestExample>
+
+ 
+### Successful Response
+
+
+<ResponseField name="Error" type="boolean">
+  Error
+</ResponseField>
+
+<ResponseField name="ErrorCode" type="string">
+  ErrorCode
+</ResponseField>
+
+
+<ResponseField name="ResponseObject" type="Object">
+  <Expandable title="properties">
+    <ResponseField name="ReportRecords" type="array">
+  <ResponseField name="Name" type="string">
+  Taxpayer Name
+  </ResponseField>
+  <ResponseField name="PhoneNumber" type="string">
+  Taxpayer PhoneNumber
+  </ResponseField>
+   <ResponseField name="Address" type="string">
+  Taxpayer Address
+  </ResponseField>
+   <ResponseField name="Category" type="string">
+  Taxpayer Category
+  </ResponseField>
+   <ResponseField name="TaxpayerIdentificationNumber" type="string">
+  Taxpayer TIN
+  </ResponseField>
+   <ResponseField name="RegNumber" type="string">
+  Taxpayer Registration Number 
+  </ResponseField>
+   <ResponseField name="Email" type="string">
+  Taxpayer Email
+  </ResponseField>
+   <ResponseField name="
+   PayerId" type="string">
+  Taxpayer PayerId
+  </ResponseField>
+   <ResponseField name="StateName" type="string">
+  Taxpayer StateName 
+  </ResponseField>
+   <ResponseField name="LGA" type="string">
+  Taxpayer LGA
+  </ResponseField>
+  </ResponseField>
+        <ResponseField name="SearchFilter" type="Object">
+        <Expandable title="properties">
+            <ResponseField name="name" type="string">
+            Name 
+            </ResponseField>
+            <ResponseField name="name" type="string">
+            Name 
+            </ResponseField>
+            <ResponseField name="PhoneNumber" type="string">
+            PhoneNumber
+            </ResponseField>
+            <ResponseField name="PayerId" type="string">
+            PayerId
+            </ResponseField>
+            <ResponseField name="CategoryId" type="Integer">
+            CategoryId
+            </ResponseField>
+            <ResponseField name="Page" type="Integer">
+            Page
+            </ResponseField>
+            <ResponseField name="PageSize" type="Integer">
+            PageSize
+            </ResponseField>
+
+        </Expandable>
+        </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+
+<ResponseField name="TotalNumberOfTaxPayers" type="Integer">
+  Total Number of Taxpayers 
+</ResponseField>
+
+
+<ResponseExample>
+
+```json Example Response
+{
+"Error": false, 
+"ErrorCode": null,
+ "ResponseObject": {
+"ReportRecords": [
+{
+"Name": "Tax Payer",
+"PhoneNumber": "08907777178", 
+"Address": "Address field",
+"Category": "Individual",
+ "TaxPayerIdentificationNumber": "7777711", 
+ "RegNumber": null,
+"Email": "taxpayer@example.com", 
+"PayerId": "IJ-0008",
+"StateName": "Abia",
+"LGA": "Umahia"
+}, {
+"Name": "Corporate",
+"PhoneNumber": "08907777178",
+"Address": "Corporate Hq",
+"Category": "Corporate", 
+"TaxPayerIdentificationNumber": "1234567890", 
+"RegNumber": null,
+"Email": "corp@example.com",
+"PayerId": "DE-0003",
+"StateName": "Abia",
+"LGA": "Umahia"
+} ],
+"SearchFilter": {
+"Name": null,
+"PhoneNumber": "08907777178",
+ "TIN": null,
+"PayerId": null,
+"CategoryId": 0,
+"Page": 1,
+"PageSize": 10
+},
+"TotalNumberOfTaxPayers": 2 }
+}
+```
+
+</ResponseExample>
+
+### Failed Response
+
+
+<ResponseExample>
+ ```json failed response 
+ {
+    "Error": true, 
+    "ErrorCode": "0001", 
+    "ResponseObject": [
+        {
+           "FieldName": "Signature", 
+           "ErrorMessage": "We could not computer signature"
+        }
+    ]
+ }
+
+ ```
+</ResponseExample>
+
+
+
+

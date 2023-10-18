@@ -1,20 +1,34 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Mintlify Starter Kit
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+- Guide pages
+- Navigation
+- Customizations
+- API Reference pages
+- Use of popular components
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+### 👩‍💻 Development
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
+
+```
+npm i -g mintlify
+```
+
+Run the following command at the root of your documentation (where mint.json is)
+
+```
+mintlify dev
+```
+
+### 😎 Publishing Changes
+
+Changes will be deployed to production automatically after pushing to the default branch.
+
+You can also preview changes using PRs, which generates a preview link of the docs.
+
+#### Troubleshooting
+
+- Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
+- Page loads as a 404 - Make sure you are running in a folder with `mint.json`

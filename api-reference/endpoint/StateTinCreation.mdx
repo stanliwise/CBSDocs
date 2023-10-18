@@ -1,0 +1,167 @@
+---
+title: "StateTinCreation"
+api: "POST /api/v1/statetin/create"
+description: "This web service call will be used by the integrating system to create a state TIN in CBS."
+---
+
+### Header 
+<ParamField header="signature" type="string" required>
+  HMACSHA256 hash of the concatenation of PhoneNumber, PayerCategory, StateCode, 
+  LGACode and ClientId.
+  HMACSHA256 (`PhoneNumber` + `PayerCategory` + `StateCode` + `LGACode` + `ClientId`) Will be the `concatValue` needed for the signature 
+  formation. ( for more information on how to create signature see the authentication section of this documentation)
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body
+
+<ParamField body="name" type="string">
+  Taxpayer Name
+</ParamField>
+
+<ParamField body="PhoneNumber" type="string">
+  Taxpayer phone number
+</ParamField>
+
+<ParamField body="Email" type="string">
+  Taxpayer Email
+</ParamField>
+
+<ParamField body="Address" type="string">
+  address Taxpayer
+</ParamField>
+
+<ParamField body="StateCode" type="string">
+  State code
+</ParamField>
+
+<ParamField body="LGACode" type="string">
+ Taxpayer LGA code
+</ParamField>
+
+<ParamField body="PayerCategory" type="Integer">
+ Taxpayer category
+</ParamField>
+
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/statetin/create' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "Name": "Test Name",
+    "PhoneNumber": "08012345678",
+    "Email": "test@test.com",
+    "Address": "Testing address, Karu, Nasarawa",
+    "StateCode": "NAS", 
+    "LGACode": "Karu",
+    "PrayerCategory": 1
+   
+}'
+```
+
+</RequestExample>
+
+ 
+ ### Successful Response
+
+ <ResponseField name="Error" type="boolean" required>
+  Indicates if request was processed successfully. If this request was processed successfully,
+   the ResponseObject would contain an object detailing the invoice info. If the error value is true, the ResponseObject would contain a list of ErrorModel
+</ResponseField>
+
+<ResponseField name="ResponseObject" type="object">
+This value would either contain the ErrorModel if error is true or the State TIN if Error is false
+<Expandable title="properties">
+            <ResponseField name="name" type="string">
+             Tax payer name 
+            </ResponseField>
+            <ResponseField name="StateTIN" type="string">
+            State TIN for the payer 
+            </ResponseField>
+             <ResponseField name="NormalizedStateTIN" type="string">
+             State TIN with only numeric part 
+            </ResponseField>
+             <ResponseField name="PhoneNumber" type="string">
+              Tax payer phone number 
+            </ResponseField>
+        </Expandable>
+
+</ResponseField>
+
+<ResponseExample>
+
+```json successful response 
+  "Error": false, 
+  "ErrorCode": null, 
+  "ResponseObject": {
+    "Name": "Test Name", 
+    "StateTIN": "GY-45632",
+    "NormalizedStateTIN": "45632", 
+    "PhoneNumber": "08012345678"
+
+  }
+```
+
+</ResponseExample>
+
+### Failed Response 
+
+<ResponseExample>
+ ```json failed response 
+ {
+    "Error": true, 
+    "ErrorCode": "0001", 
+    "ResponseObject": [
+        {
+           "FieldName": "Signature", 
+           "ErrorMessage": "We could not computer signature"
+        }
+    ]
+ }
+
+ ```
+</ResponseExample>
+
+
+
+### Payer Category 
+
+| Name                   | Value             | 
+| -----------------------| ----------------- | 
+| Individual             |  1                |         
+| Corporate              |  2                |
+
+
+
+### LGA Code
+
+
+| Name               | Value 
+|--------------------|-----------------------
+|Akwanga             |    AKWANGA
+|Awe                 |    AWE
+|Doma                |    DOMA
+|Karu                |    KARU 
+|Keana               |    KEANA 
+|Keffi               |    KEFFI
+|Kokona              |    KOKONA
+|Lafia               |    LAFIA
+|Nasarawa            |    NASARAWA
+|Nasarawa-Eggon      |    NASARAWA-EGGON
+|Obi                 |    OBI 
+|Toto                |    TOTO 
+|Wamba               |    WAMBA
+
+
+
+                          

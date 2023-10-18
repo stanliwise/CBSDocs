@@ -1,0 +1,195 @@
+---
+title: "PaymentNotification"
+api: "POST /api/v1/payment/notification"
+description: "This web service call will be used by the integrating system to notify CBS of payment against an invoice."
+contentType: "application/json"
+---
+
+
+### Header
+
+<ParamField header="signature" type="string" required>
+HMACSHA256 hash of the concatenation of  `InvoiceNumber`, `PaymentRef`,
+ `AmountPaid` (decimal places), `PaymentDate` and `Channel` will be the `concatValue` for this endpoint. ( for more information on how to create signature see the authentication section of this documentation)
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body
+
+<ParamField body="InvoiceNumber" type="string" required>
+  Invoice number payment was made against  
+</ParamField>
+
+<ParamField body="AmountPaid" type="Decimal" required>
+  Amount paid in two decimal places   
+</ParamField>
+
+<ParamField body="BankBranch" type="string">
+  Bank branch name 
+</ParamField>
+
+<ParamField body="BankCode" type="string" required>
+  CBN defined Bank Code   
+</ParamField>
+
+<ParamField body="BankName" type="string" required>
+  CBN defined Bank Name   
+</ParamField>
+
+<ParamField body="PaymentDate" type="string" required>
+  Payment date (dd/MM/yyyy HH:mm:ss)  
+</ParamField>
+
+<ParamField body="PaymentRef" type="string" required>
+  Payment reference. This must be unique per 
+  transaction   
+</ParamField>
+
+<ParamField body="TransactionDate" type="string" required>
+  Date of transaction (dd/MM/yyyy HH:mm:ss)  
+</ParamField>
+
+<ParamField body="InvoiceNumber" type="string" required>
+  Channel payment was made through   
+</ParamField>
+
+<ParamField body="PaymentMethod" type="string" required>
+  Payment method   
+</ParamField>
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/report/collection-report' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+ "InvoiceNumber": "1000425618", 
+ "PaymentRef": "65454879865542415512", 
+ "PaymentDate": "30/03/2018 17:45:04",
+ "BankCode": "050", 
+ "BankName": "Eco Bank", 
+ "BankBranch": "Yaba, Alagomeji", 
+ "AmountPaid": "1000.25",
+ "TransactionDate": "29/05/2019 17:45:04", 
+ "Channel": "Bank Branch", 
+ "PaymentMethod": "Inter-transfer",
+}'
+
+```
+
+</RequestExample>
+
+
+### Successful Response 
+
+<ResponseField name="Error" type="Boolean" required>
+  Indicates if request was processe successfully. if the request 
+  was processe successfully, the `ResponseObject` would contain an 
+  object detailing the invoice info. If the error value is true, the 
+  `ResponseObject` would contain a list of `ErrorModel`.
+</ResponseField>
+
+<ResponseField name="ResponseObject" type="String" Object>
+   This value would either contain the `ErrorModel` if error is true or 
+   the invoice details if Error is false.
+
+   <Expandable title="properties">
+            <ResponseField name="ResponseCode" type="string">
+             Response Code. This will be 0000 for ok requests
+            </ResponseField>
+            <ResponseField name="ResponseDescription" type="string">
+            Response description
+            </ResponseField>
+             
+        </Expandable>
+</ResponseField>
+
+<ResponseExample>
+
+```json Example Response 
+
+{
+    "Error": true, 
+    "ErrorCode": "null",
+    "ResponseObject": [
+        {
+            "ResponseCode": "0000",
+            "ErrorMessage":"Paymment notification Successful"
+        }
+    ]
+
+}
+
+
+```
+
+</ResponseExample>
+
+
+### Failed Response 
+
+The below will be returned by the web service if Error is True;
+
+<ResponseField name="FieldName" type="string" required>
+  FieldName
+</ResponseField>
+
+<ResponseField name="ErrorMessage" type="string" required>
+  Error message
+</ResponseField>
+
+
+<ResponseExample>
+
+```json Failed Response 
+
+{
+    "Error": true, 
+    "ErrorCode": "0001",
+    "ResponseObject": [
+        {
+            "FieldName": "Signature",
+            "ErrorMessage":"We could not computer signature"
+        }
+    ]
+
+}
+
+
+```
+
+</ResponseExample>
+
+
+
+### Payment Provider
+
+| Payment Provider       | Value             | 
+| -----------------------| ----------------- | 
+| Bank Branch            |  Bank Branch      |         
+| ATM                    |  ATM              |
+| POS                    |  POS              |
+| Web                    |  Web              |
+| Kiosk                  |  Kiosk            |
+| Voice                  |  Voice            |
+
+
+### Available payment methods
+
+| Payment Provider       | Value             | 
+| -----------------------| ----------------- | 
+| Cash                   |  Cash             |         
+| Cheque                 |  Cheque           |
+| Card Transfer          |  Card Transfer    |
+| Inter-transfer         |  Inter-transfer   |
+
+
+

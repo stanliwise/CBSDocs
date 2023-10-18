@@ -1,0 +1,70 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "CBS Documentation",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+   "api":{
+     "baseUrl": "https://uat.nasarawaigr.com",
+     "auth": {
+       
+        
+     }
+   },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#12A7D3",
+    "light": "#81D7F7",
+    "dark": "#004E7A"
+  },
+  "topbarLinks": [
+    {
+      "name": "Product Overview",
+      "url": "https://mintlify.com/docs"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://dashboard.mintlify.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": ["index"]
+    },
+    {
+      "group": "Concepts",
+      "pages": ["concepts/Integrationguides"]
+    },
+    
+    {
+      "group": "API Documentation",
+      "pages": ["api-reference/authentication"]
+    },
+    {
+      "group": "Endpoint Examples",
+      "pages": [
+        "api-reference/endpoint/StateTinCreation",
+        "api-reference/endpoint/StateTinSearch",
+        "api-reference/endpoint/CreateInvoice", 
+        "api-reference/endpoint/PaymentCollectionReport",
+        "api-reference/endpoint/InvoiceValidation",
+        "api-reference/endpoint/PaymentNotification"
+     
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/mintlify",
+    "github": "https://github.com/mintlify",
+    "linkedin": "https://www.linkedin.com/company/mintsearch"
+  },
+  "backgroundImage": "/background.png"
+}

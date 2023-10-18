@@ -1,0 +1,26 @@
+---
+title: 'Introduction to CBS'
+description: 'The objective of this page is to define the platform for interaction between the Nasarawa State Central Billing System (CBS) web service platform and third-party platforms for the purpose of carrying out specific processes. 
+The communication mode is via REST web service and is accessible via the URL (to be provided).'
+
+---
+
+
+### Purpose of our API
+
+
+The purpose of the Central Billing system is to generate bills centrally for Ministries, Departments and Agencies (MDAs) of Government as well as 
+facilitate the monitoring of revenue accruable to MDAs, improve collections through the introduction of various payment gateways to minimize 
+revenue shortfalls and support the settlement processes of all revenue streams that require payments for taxes and payment for MDA services.
+the target users of the Central Billing System, which include schools, states, state-level MDAs, federal-level MDAs, and Fast-Moving Consumer Goods (FMCG) companies.
+
+
+### Objective
+The objective of this document is to define the platform for interaction between the Nasarawa State Central Billing System (CBS) web service platform and third-party platforms for the purpose of carrying out specific processes. 
+The communication mode is via REST web service and is accessible via the URL (to be provided).
+
+
+### Security
+The `client ID` and `client secret` MUST be included in every web service request to ensure only authorized platforms get access to interact with the CBS platform via web service. 
+These parameters must be set in the authorization header of every request to ensure restricted access.
+The `HMAC` `SHA` `256` `HEX` Digest is also employed during request such that the integrating system will re-compute the digest to confirm the correctness of the decrypted data.

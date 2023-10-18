@@ -1,0 +1,170 @@
+---
+title: 'Integration Guide'
+description: 'Welcome! With our APIs, you can create invoice, validate invoice, generate payment collection report for state own services.'
+
+---
+
+
+### Getting Started With CBS 
+
+The given `client_id` and `Client Secret` will be used along side other parameters to create a request header for the different end points. 
+the `Client Secret` is combined with other information from the request body and passed through an encryption algorithm to create a header signature.
+The `client_id` and `signature` are used together as header parameters when making request to any of CBS endpoints.
+
+below is sample of how the request header is supposed to look like:
+
+
+```bash Example Request
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/statetin/create' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "Name": "Test Name",
+    "PhoneNumber": "08012345678",
+    "Email": "test@test.com",
+    "Address": "Testing address, Karu, Nasarawa",
+    "StateCode": "NAS", 
+    "LGACode": "Karu",
+    "PayerCategory": 1
+   
+}'
+```
+
+
+### How To Generate An Invoice With CBS 
+
+To generate an invoice with CBS API, the following steps are necessary:
+
+1. make a `POST` request to the `StateTinCreation` endpoint using the `Name`, `PhoneNumber`, `Email`, `Address`, `StateCode` 
+`LGACode` and `PayerCategory` as the body parameter of the request:
+
+```bash Example Request 
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/statetin/create' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "Name": "Test Name",
+    "PhoneNumber": "08012345678",
+    "Email": "test@test.com",
+    "Address": "Testing address, Karu, Nasarawa",
+    "StateCode": "NAS", 
+    "LGACode": "Karu",
+    "PayerCategory": 1
+   
+}'
+```
+
+if the request is successful, you'll get the following response:
+
+```bash Example Response
+
+  "Error": false, 
+  "ErrorCode": null, 
+  "ResponseObject": {
+    "Name": "Test Name", 
+    "StateTIN": "GY-45632",
+    "NormalizedStateTIN": "45632", 
+    "PhoneNumber": "08012345678"
+
+  }
+
+```
+
+use the `StateTIN` (`Payer Id`) value  from the json response to make subsequent request to the `CreateInvoice` endpoint.
+
+
+```bash 
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/invoice/create' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "RevenueHeadId": 16, 
+    "TaxEntityInvoice": {
+        "TaxEntity":{
+            "PayerId": "GY-45632"
+        }, 
+        "Amount": 89.03
+    }, 
+    "CallBackURL": "add a call back URL if payment notification is required" 
+}'
+
+```
+
+for a successful invoice creation, you'll get  similar response as shown:
+
+```bash Example Response 
+{
+    "Error": false,
+    "ErrorCode": null, 
+    "ResponseObject": {
+        "Recipient": "Test User", 
+        "PayerId": "HA-000034", 
+        "Email": "taxpayer@example.com",
+        "PhoneNumber": "0804832361",
+        "TIN": null, 
+        "MDAName": "MDA TEST", 
+        "RevenueHeadName": "Revenue head TEST",
+        "ExternalRefNumber": null, 
+        "PaymentURL": "http://url/c/make-payment/1000564651", 
+        "Description": "API SELF | CODE TEST 2018 636788501722464167/SELF", 
+        "RequestReference":null, 
+        "IsDuplicateRequestReference":false, 
+        "InvoiceNumber": "1000372608",
+        "InvoicePreviewUrl":"http://127.0.0.1/CashFlow.API/V2/ViewInvoice/1000372608/Html", 
+        "AmountDue":89.03
+    }
+}
+
+```
+you can validate the status of the invoice by making a `POST` request to the `InvoiceValidation` endpoint using the `InvoiceNumber` as the 
+body of the request. 
+
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/invoice/validate' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+ "InvoiceNumber": "1000372608", 
+}'
+
+
+```
+
+you can also use the `PaymentNotification` endpoint to notify CBS of payment against an invoice by using the 
+`InvoiceNumber` from the response obtained when the `CreateInvoice` endpoint was called.
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/report/collection-report' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+ "InvoiceNumber": "1000425618", 
+ "PaymentRef": "65454879865542415512", 
+ "PaymentDate": "30/03/2018 17:45:04",
+ "BankCode": "050", 
+ "BankName": "Eco Bank", 
+ "BankBranch": "Yaba, Alagomeji", 
+ "AmountPaid": "1000.25",
+ "TransactionDate": "29/05/2019 17:45:04", 
+ "Channel": "Bank Branch", 
+ "PaymentMethod": "Inter-transfer",
+}'
+
+
+
+```
+
+
+
+
+
+
+
+
+

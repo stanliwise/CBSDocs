@@ -1,0 +1,144 @@
+---
+title: "InvoiceValidation"
+api: "POST /api/v1/invoice/validate"
+description: "This web service call will be used by the integrating system to validate the status of an invoice in CBS"
+contentType: "application/json"
+---
+### Header 
+
+<ParamField header="signature" type="string" required>
+HMACSHA256 hash of the concatenation of `InvoiceNumber` and `ClientId`
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body 
+
+<ParamField body="InvoiceNumber" type="string" required>
+ Invoice number you want to base the search on 
+</ParamField>
+
+
+<RequestExample>
+
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/invoice/validate' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+ "InvoiceNumber": "add invoice number", 
+}'
+
+```
+
+
+</RequestExample>
+
+
+### Successful Response
+
+The below will be returned by the web service if Error is false 
+
+<ResponseField name="ResponseCode" type="string" required>
+ Response code. This will be 0000 for ok requests  
+</ResponseField>
+
+<ResponseField name="Amount" type="Decimal" required>
+ Amount due on the invoice in two decimal places   
+</ResponseField>
+
+<ResponseField name="Email" type="string" required>
+ Email of the customer   
+</ResponseField>
+
+
+<ResponseField name="InvoiceNumber" type="string" required>
+ Invoice number  
+</ResponseField>
+
+<ResponseField name="PhoneNumber" type="string" required>
+ Phone number of the customer   
+</ResponseField>
+
+<ResponseField name="Recipient" type="string" required>
+ Name of the customer   
+</ResponseField>
+
+<ResponseField name="ResponseDescription" type="string" required>
+ Invoice description
+</ResponseField>
+
+<ResponseField name="SettlementCode" type="string" required>
+ Code for settlement   
+</ResponseField>
+
+<ResponseField name="SettlementType" type="string">
+ Type of settlement (1 for Flat, 2 for percentage) 
+</ResponseField>
+
+<ResponseExample>
+
+```json ResponseExample
+
+{
+    "Error": false, 
+    "ErrorCode": null,
+    "ResponseObject":{
+        "Recipient": "Tax Payer", 
+        "Amount": "11492.00",
+        "InvoiceNumber": "10000123456"
+        "Email": "taxpayer@example.com", 
+        "PhoneNumber": "null", 
+        "PayerId": "null", 
+        "ResponseCode": "0000",
+        "ResponseDescription": "Invoice for Invoice Description", 
+        "SettlementCode": "0001", 
+        "SettlementType": "2",
+    } 
+
+
+}
+
+```
+</ResponseExample>
+
+
+### Failed Response 
+
+The below will be returned by the web service if Error is True;
+
+<ResponseField name="FieldName" type="string" required>
+  FieldName
+</ResponseField>
+
+<ResponseField name="ErrorMessage" type="string" required>
+  Error message
+</ResponseField>
+
+
+<ResponseExample>
+
+```json Failed Response 
+
+{
+    "Error": true, 
+    "ErrorCode": "PPVE",
+    "ResponseObject": [
+        {
+            "FieldName": "Signature",
+            "ErrorMessage":"We could not computer signature"
+        }
+    ]
+
+}
+
+
+```
+
+</ResponseExample>

@@ -1,0 +1,331 @@
+---
+title: "PaymentCollectionReport"
+api: "POST /api/v1/report/collection-report"
+description: "This web service call will be used by the integrating system to get a report of successful transactions done through CBS"
+---
+
+### Header
+
+<ParamField header="signature" type="string" required>
+HMACSHA256 hash of the concatenation of `MDAId`, `FromRang` (dd/MM/yyyy), `EndRange` (dd/MM/yyyy), `ClientID`
+  will be the `concatValue` for this endpoint. ( for more information on how to create signature see the authentication section of this documentation)
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body
+
+<ParamField body="FromRange" type="string" required>
+  Start dat of the search range 
+  (dd/mm/yyyy) 
+</ParamField>
+
+
+
+<ParamField body="EndRange" type="string" required>
+  End date of the search range 
+  (dd/mm/yyyy) 
+  
+</ParamField>
+
+
+<ParamField body="InvoiceNumber" type="string">
+  Invoice number you want to base the search on 
+</ParamField>
+
+
+
+<ParamField body="PaymentRef" type="string">
+  Payment ref you want to base the search on 
+</ParamField>
+
+
+
+<ParamField body="RevenueHeadId" type="Integer">
+  The integer value of the revenue head your search is based on 
+</ParamField>
+
+
+
+<ParamField body="MDAId" type="Integer">
+  The integer value of the MDA your search is based on 
+</ParamField>
+
+
+<ParamField body="PaymentProvider" type="string">
+  Payment provider your search is based on 
+</ParamField>
+
+
+<ParamField body="ReceiptNumber" type="string">
+  The receipt number your search is based on 
+</ParamField>
+
+<ParamField body="BankCode" type="string">
+  CBN bank code your search is based on  
+</ParamField>
+
+<ParamField body="Page" type="Integer" required>
+  Page of records to be fetched  
+</ParamField>
+
+<ParamField body="PageSize" type="Integer">
+  Number of records sto be fetched  
+</ParamField>
+
+<ParamField body="PaymentDirection" type="string">
+  The direction in which you search is based on. 
+  e.g if PaymentDate is passed, payment would be based on the 
+  payment date  
+</ParamField>
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST ' http://URL/api/v1/report/collection-report' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw  '{
+"FromRange": "07/11/2021",
+ "EndRange": "12/11/2021", 
+ "paymentRef": "",
+"RevenueHeadId": "3539",
+"MDAId": 0,
+"PaymentProvider": "0", 
+"InvoiceNumber": "", 
+"ReceiptNumber": "",
+"BankCode": "",
+"PaymentDirection": "PaymentDate", 
+   "Pager": {
+"Page": 1,
+"PageSize": 100 
+  }
+}'
+
+```
+
+</RequestExample>
+
+
+### Successful Response 
+
+<ResponseField name="Amount" type="Decimal" required>
+  Amount paid on the invoice 
+</ResponseField>
+
+<ResponseField name="PaymentDate" type="string" required>
+ Payment date (dd/mm/yyyy)
+</ResponseField>
+
+<ResponseField name="RevenueHeadName" type="string" required>
+  Revenue head name 
+</ResponseField>
+
+<ResponseField name="TaxPayerName" type="string" required>
+  Name of the tax payer 
+</ResponseField>
+
+<ResponseField name="PayerId" type="string" required>
+  Tax payer reference value 
+</ResponseField>
+
+<ResponseField name="TaxPayerTIN" type="string">
+  Tax payer TIN 
+</ResponseField>
+
+<ResponseField name="MDAName" type="string" required>
+  MDA name  
+</ResponseField>
+
+<ResponseField name="PaymentProvider" type="string" required>
+  Payment provider 
+</ResponseField>
+
+<ResponseField name="Page" type="Integer" required>
+  Page of records fetched  
+</ResponseField>
+
+<ResponseField name="PageSize" type="Integer" required>
+  Number of records fetched 
+</ResponseField>
+
+<ResponseField name="PaymentDirection" type="string" required>
+  The direction in wich search is based on e.g PaymentDate, 
+  payment would be based on the payment date 
+</ResponseField>
+
+<ResponseField name="FromRange" type="string" required>
+  Start date of the search range (dd/mm/yyyy)
+</ResponseField>
+
+<ResponseField name="EndRange" type="string" required>
+  End date of the search range (dd/mm/yyyy)
+</ResponseField>
+
+<ResponseField name="InvoiceNumber" type="string" required>
+  Invoice number search is based on 
+</ResponseField>
+
+<ResponseField name="PaymentRef" type="string" required>
+  Payment ref search is based on 
+</ResponseField>
+
+<ResponseField name="RevenueHeadId" type="Integer" required>
+  The integer value of the revenue head your search is 
+  based on  
+</ResponseField>
+
+<ResponseField name="MDAId" type="Integer" required>
+  The integer value of the MDA your search is based on 
+</ResponseField>
+
+<ResponseField name="ReceiptNumber" type="string" required>
+ The receipt number your search is based on 
+</ResponseField>
+
+<ResponseField name="BankCode" type="string" required>
+CBN bank code your search is based on 
+</ResponseField>
+
+<ResponseField name="TotalAmountPaid" type="Decimal" required>
+  Total amount paid for the given search params 
+</ResponseField>
+
+<ResponseField name="TotalNumberOfPayment" type="Decimal" required>
+  Total number of payments for the given search params 
+</ResponseField>
+
+<ResponseField name="Bank" type="string" required>
+  Bank name 
+</ResponseField>
+
+<ResponseField name="BankBranchName" type="string" required>
+  Bank branch name 
+</ResponseField>
+
+
+
+<ResponseExample>
+
+```json Example Response
+
+{
+    "PageParameters": {
+"Page": 0,
+        "PageSize": 0
+    },
+"FromRange": "dd/MM/yyyy",
+"EndRange": "dd/MM/yyyy",
+"MDAName": "MDA Name searched for",
+"RevenueHeadName": "Revenue head name searched for",
+"MDAId": 0,
+"RevenueHeadId": 0,
+"ReportRecords": [
+    {
+        "PaymentDate": "dd/MM/yyyy",
+        "TaxPayerName": "Recepient",
+        "TaxPayerTIN": "TIN optional",
+        "RevenueHeadName": "Revenue head name",
+        "Amount": 0,
+"PaymentRef": "Payment ref",
+"PaymentProvider": "Provider",
+"InvoiceNumber": "invoice number",
+"ReceiptNumber": "receipt number",
+"MDAName": "MDA name",
+"MDAId": 0,
+"RevenueHeadId": 0,
+"Bank": "Bank Name",
+"BankBranchName": "Bank Branch Name",
+"BankCode": "Bank Code",
+"PayerId": "PayerId"
+    }
+],
+"PaymentRef": "payment ref search was based",
+    "PaymentProvider": "Payment provider searched for",
+    "InvoiceNumber": "invoice number searched for",
+    "ReceiptNumber": "receipt number searched for",
+    "TotalNumberOfPayment": 0,
+    "TotalAmountPaid": 0,
+    "BankCode": "Bank code searched for",
+    "PaymentDirection": "PaymentDate"
+}
+
+
+```
+</ResponseExample>
+
+
+
+
+### Failed Response 
+
+The below will be returned by the web service if Error is True;
+
+<ResponseField name="FieldName" type="string" required>
+  FieldName
+</ResponseField>
+
+<ResponseField name="ErrorMessage" type="string" required>
+  Error message
+</ResponseField>
+
+
+<ResponseExample>
+
+```json Failed Response 
+
+{
+    "Error": true, 
+    "ErrorCode": "PPVE",
+    "ResponseObject": [
+        {
+            "FieldName": "Signature",
+            "ErrorMessage":"We could not computer signature"
+        }
+    ]
+
+}
+
+
+```
+
+</ResponseExample>
+
+
+
+### Available Payment Providers
+
+| Payment Provider       | Value             | 
+| -----------------------| ----------------- | 
+| Net Pay                |  Net Pay          |         
+| Remita                 |  Remita           |
+| PayDirect              |  PayDirect        |
+| BankCollect            |  BankCollect      |
+| NIBSS (Ebills Pay)     |  NIBSS            |
+              
+
+
+### Available Payment Direction 
+
+| Payment Direction      | Value             | 
+| -----------------------| ----------------- | 
+| Payment date           |  paymentDate      |         
+| Transaction date       |  TransactionDate  |
+| Synchronization date   |  CreatedAtUtc     |
+
+
+### Error Codes and Description 
+
+| ErrorCode              | Description                                               | 
+| -----------------------| ----------------------------------------------------------| 
+| PPS1                   |  Invalid Signature                                        |         
+| PPIE                   |  Internal Server Exception                                |
+| PPVE                   |  Form ValidationError                                     |
+| PPCK                   |  Client Identity Could Not Be Found In The Request Header |
+| PPU1                   | User Not Found                                            |

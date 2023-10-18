@@ -1,0 +1,197 @@
+---
+title: "CreateInvoice"
+api: "POST /api/v1/invoice/create"
+description: "This web service call will be used by the integrating system to create an invoice in CBS"
+---
+
+### Header
+
+
+
+<ParamField header="signature" type="string" required>
+HMACSHA256 hash of the concatenation of `RevenueHeadID`, `Amount` (2 decimal places), `CallBackURL`, `ClientID`
+   Will be the `concatValue` needed for the signature 
+  formation. ( for more information on how to create signature see the authentication section of this documentation)
+</ParamField>
+
+<ParamField header="secret_key" type="string" required>
+It is a unique identifier that is assigned to each registered client/application that wants to use the API.
+</ParamField>
+
+ <Warning>Note that the order in which you arrange the `concatValue` matters. </Warning>
+
+### Body
+
+<ParamField body="RevenueHeadId" type="Integer" required>
+  Identifier of the revenue head you want to generate an invoice for 
+</ParamField>
+
+<ParamField body="Payer ID" type="string" required>
+  This is the State TIN generated during enumeration 
+</ParamField>
+
+<ParamField body="Amount" type="decimal(2)" required>
+  Invoice amount to be generate. For cases 
+  where you are not required to send an amount, kindly send 0.00 as 
+  the amount and use the seam in your signature concantenation 
+</ParamField>
+
+<ParamField body="CallBackURL" type="string" required>
+  Call back URL for payment notification 
+</ParamField>
+
+
+<RequestExample>
+
+```bash Example Request
+curl --location --request POST 'https://uat.nasarawaigr.com/api/v1/invoice/create' \
+--header 'Content-Type: application/json' \
+--header 'ClientID: $client_id' \
+--header 'Signature: $signature' \
+--data-raw '{
+    "RevenueHeadId": 16, 
+    "TaxEntityInvoice": {
+        "TaxEntity":{
+            "PayerId": "YG-57585"
+        }, 
+        "Amount": 89.03
+    }, 
+    "CallBackURL": "add a call back URL if payment notification is required" 
+}'
+```
+
+</RequestExample>
+
+
+### Successful Response
+
+<ResponseField name="Error" type="boolean">
+  False 
+</ResponseField>
+
+<ResponseField name="ErrorCode" type="string">
+  It will be null for successful reququest 
+</ResponseField>
+
+<ResponseField name="Recipient" type="string">
+  Payer name based on the State TIN passed  
+</ResponseField>
+
+<ResponseField name="PayerId" type="string">
+  State TIN for the payer 
+</ResponseField>
+
+<ResponseField name="Email" type="string">
+  Payer email address  
+</ResponseField>
+
+<ResponseField name="PhoneNumber" type="string">
+  Payer phone number  
+</ResponseField>
+
+<ResponseField name="TIN" type="string">
+  TIN 
+</ResponseField>
+
+<ResponseField name="MDAName" type="string">
+  MDA Name  
+</ResponseField>
+
+<ResponseField name="RevnueHeadName" type="string">
+  Revenue head name  
+</ResponseField>
+
+<ResponseField name="ExternalRefNumber" type="string">
+  External reference number 
+</ResponseField>
+
+<ResponseField name="PaymentURL" type="string">
+  Invoice payment URL  
+</ResponseField>
+
+<ResponseField name="Description" type="string">
+  Invoice description
+</ResponseField>
+
+<ResponseField name="RequestReference" type="string">
+  Invoice request reference  
+</ResponseField>
+
+<ResponseField name="IsDuplicateRequestReference" type="Boolean">
+  Marked if an invoice request is a dublicated 
+</ResponseField>
+
+<ResponseField name="InvoiceNumber" type="string">
+  Invoice number  
+</ResponseField>
+
+<ResponseField name="InvoicePreviewUrl" type="string">
+  Invoice preview URL 
+</ResponseField>
+
+<ResponseField name="AmountDue" type="string">
+  Amount due on the invoice  
+</ResponseField>
+
+
+
+<ResponseExample>
+
+```bash Example Response 
+{
+    "Error": false,
+    "ErrorCode": null, 
+    "ResponseObject": {
+        "Recipient": "Test User", 
+        "PayerId": "HA-000034", 
+        "Email": "taxpayer@example.com",
+        "PhoneNumber": "0804832361",
+        "TIN": null, 
+        "MDAName": "MDA TEST", 
+        "RevenueHeadName": "Revenue head TEST",
+        "ExternalRefNumber": null, 
+        "PaymentURL": "http://url/c/make-payment/1000564651", 
+        "Description": "API SELF | CODE TEST 2018 636788501722464167/SELF", 
+        "RequestReference":null, 
+        "IsDuplicateRequestReference":false, 
+        "InvoiceNumber": "1000372608",
+        "InvoicePreviewUrl":"http://127.0.0.1/CashFlow.API/V2/ViewInvoice/1000372608/Html", 
+        "AmountDue":89.03
+    }
+}
+
+```
+
+</ResponseExample>
+
+
+### Failed Response 
+
+<ResponseField name="FieldName" type="string">
+  FieldName
+</ResponseField>
+<ResponseField name="ErrorMessage" type="string">
+  Error message 
+</ResponseField>
+
+
+<ResponseExample>
+
+```json Failed Response 
+
+{
+    "Error": true, 
+    "ErrorCode": "PPVE",
+    "ResponseObject": [
+        {
+            "FieldName": "Signature",
+            "ErrorMessage":"We could not computer signature"
+        }
+    ]
+
+}
+
+
+```
+
+</ResponseExample>
